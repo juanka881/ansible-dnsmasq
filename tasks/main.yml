@@ -1,0 +1,63 @@
+---
+- name: create group
+  group:
+    name: "{{ dnsmasq_service_group }}"
+    state: present
+  when: dnsmasq_service_group is defined
+
+- name: create user
+  user:
+    name: "{{ dnsmasq_service_user }}"
+    group: "{{ dnsmasq_service_group }}"
+    password: "*"
+    password_lock: yes
+    create_home: no
+    system: yes
+    shell: /usr/sbin/nologin
+    state: present
+  when: dnsmasq_service_user is defined
+
+- name: install dnsmasq
+  apt:
+    name: dnsmasq
+    state: present
+
+- name: setup config
+  template:
+    src: dnsmasq.conf.j2
+    dest: /etc/dnsmasq.conf
+    mode: 0644
+
+- name: setup firewall
+  ufw:
+    rule: allow
+    comment: "dnsmasq {{ item }} in"
+    port: "{{ dnsmasq_port }}"
+    proto: udp
+    direction: in
+    interface: "{{ item }}"
+  with_items: "{{ dnsmasq_interfaces }}"
+
+- name: disable systemd-resolved
+  when: dnsmasq_disable_systemd_resolved | bool
+  systemd:
+    name: systemd-resolved
+    enabled: no
+    state: stopped
+
+- name: unlink /etc/resolv.conf
+  when: dnsmasq_disable_systemd_resolved | bool
+  file:
+    path: /etc/resolv.conf
+    state: absent
+
+- name: setup resolve.conf
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    mode: 0644
+
+- name: restart dnsmasq
+  service:
+    name: dnsmasq
+    state: restarted

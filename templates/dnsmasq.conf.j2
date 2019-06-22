@@ -1,0 +1,28 @@
+# general
+domain-needed
+bogus-priv
+local-service
+cache-size={{ dnsmasq_cache_size }}
+no-resolv
+no-hosts
+clear-on-reload
+
+# service
+user={{ dnsmasq_service_user | mandatory }}
+group={{ dnsmasq_service_group | mandatory }}
+
+# network
+port={{ dnsmasq_port }}
+{% if dnsmasq_interfaces %}
+bind-interfaces
+{% for interface in dnsmasq_interfaces %}
+interface={{ interface }}
+{% endfor %}
+{% endif %}
+
+# servers
+{% if dnsmasq_servers %}
+{% for server in dnsmasq_servers %}
+server={{ server }}
+{% endfor %}
+{% endif %}

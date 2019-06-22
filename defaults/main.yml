@@ -1,0 +1,32 @@
+# disable systemd-resolved so it does not affect /etc/resolv.conf
+dnsmasq_disable_systemd_resolved: true
+dnsmasq_service_user: "dnsmasq"
+dnsmasq_service_group: "dnsmasq"
+
+# listen interfaces
+# eth0  public
+# eth1  priv
+# lo    loopback
+dnsmasq_interfaces: []
+
+# listen port
+dnsmasq_port: "53"
+
+# cache size
+dnsmasq_cache_size: 10000
+
+# list of upstream servers
+# google
+# 8.8.8.8
+# 8.8.4.4
+#
+# digital ocean
+# 67.207.67.3
+# 67.207.67.2
+#
+# cloudflare
+# 1.1.1.1
+# 1.0.0.1
+dnsmasq_servers:
+  - "1.1.1.1"
+  - "1.0.0.1"
