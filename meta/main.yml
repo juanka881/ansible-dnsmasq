@@ -1,0 +1,8 @@
+---
+galaxy_info:
+  role_name: juankakode.dnsmasq
+  author: "juankakode"
+  description: "install dnsmasq"
+  min_ansible_version: "2.4"
+
+dependencies: []
